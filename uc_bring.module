@@ -97,7 +97,11 @@ function uc_bring_quote($products, $details, $method) {
 
   $quotes['bedriftspakke'] = frakt_pris_type('bedriftspakke', "BPAKKE_DOR-DOR", $postnummer, $vekt, $accessorials);
   if(!is_array($quotes['bedriftspakke']))
-    return;
+   unset($quotes['bedriftspakke']); 
+
+  $quotes['pakke_pa_doren'] = frakt_pris_type('pakke_pa_doren', "PA_DOREN", $postnummer, $vekt, $accessorials);
+  if(!is_array($quotes['pakke_pa_doren']))
+    unset($quotes['pakke_pa_doren']);
 
   return $quotes;
 }
@@ -128,8 +132,17 @@ function frakt_pris_type($indeks, $typenavn, $postnummer, $vekt, $accessorials){
 function frakt_pris($vekt, $postnummer, $pakketype){
   if(is_numeric($vekt) && $vekt > 0){
     $tara = 1000;
-    $brutto_vekt = $vekt + $tara;
-    $file = fopen("http://fraktguide.bring.no/fraktguide/products/price.xml?from=5081&to=" . $postnummer . "&weightInGrams=" . $brutto_vekt . "&product=" . $pakketype . "&edi=false&postingAtPostoffice=true", "br");
+    $maks_pakke_vekt = 24000;
+    $rest_vekt = $vekt;
+    $vektTekst = "";
+    $pakke_nr = 0;
+    while($rest_vekt > 0){
+        $pakke_vekt = $rest_vekt > $maks_pakke_vekt ? $maks_pakke_vekt : $rest_vekt;
+ 	$vektTekst .= "&weightInGrams" . $pakke_nr . "=" . ($pakke_vekt + $tara);
+	$rest_vekt -= $pakke_vekt;
+	$pakke_nr += 1;
+    }
+    $file = fopen("http://api.bring.com/shippingguide/products/price.xml?from=5081&to=" . $postnummer . $vektTekst . $brutto_vekt . "&product=" . $pakketype . "&edi=false&additional=EVARSLING&postingAtPostoffice=true&clientUrl=www.zapatista.no", "br");
     if (!$file) {
       return;
     }
