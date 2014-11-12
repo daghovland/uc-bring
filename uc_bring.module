@@ -99,10 +99,6 @@ function uc_bring_quote($products, $details, $method) {
   if(!is_array($quotes['bedriftspakke']))
    unset($quotes['bedriftspakke']); 
 
-  $quotes['pakke_pa_doren'] = frakt_pris_type('pakke_pa_doren', "PA_DOREN", $postnummer, $vekt, $accessorials);
-  if(!is_array($quotes['pakke_pa_doren']))
-    unset($quotes['pakke_pa_doren']);
-
   return $quotes;
 }
 
