@@ -1,0 +1,1 @@
+A module for drupal 6 and ubercart giving the price of shipping packages with the norwegian "Servicepakke" from Posten / Bring. Accesses Brings own website to get accurate pricing. Only the pricing info needed for our project is available, but it is probably not hard to extend it to get more information.
